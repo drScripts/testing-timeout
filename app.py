@@ -1,8 +1,6 @@
-import json
 import os
 from sys import stderr
 
-import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
