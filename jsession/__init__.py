@@ -8,11 +8,11 @@ load_dotenv()
 
 zep_login_url = os.environ.get("ZEP_LOGIN_URL", "")
 
-zep_pass = os.environ.get("ZEP_PASS", "")
-zep_user = os.environ.get("ZEP_USER", "")
+# zep_pass = os.environ.get("ZEP_PASS", "")
+# zep_user = os.environ.get("ZEP_USER", "")
 
 
-def get_jsessionid(user, password):
+def get_jsessionid(zep_user, zep_pass):
     try:
         headers = CaseInsensitiveDict()
         headers["Content-Type"] = "application/x-www-form-urlencoded"
