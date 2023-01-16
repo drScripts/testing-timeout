@@ -200,15 +200,24 @@ def get_pipelines(id, jsonify):
                 return print("job is not array")
 
             for job in jobs:
+                try:
+                    note_id=job["notebook"]["id"]
+                    zep_user=job["zepUser"]
+                    zep_pass=job["zepPass"]
+                except Exception as e:
+                    print(str(e))
+                    return print("notebook id, zepUser, zepPass is required")
+                if not note_id == "" or not zep_user == "" or not zep_pass == "":
+                    return print("notebook id, zepUser, zepPass is required")
                 # run notebook
                 run = run_pipeline(
-                    job["notebook"]["id"],
+                    note_id,
                     id,
                     process_order_index,
                     len(flow_job),
                     jsonify,
-                    job["zepUser"],
-                    job["zepPass"]
+                    zep_user,
+                    zep_pass
                 )
                 finish = run[1]
                 finish["label"] = job["data"]["label"]
