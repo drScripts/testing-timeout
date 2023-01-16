@@ -12,7 +12,7 @@ zep_pass = os.environ.get("ZEP_PASS", "")
 zep_user = os.environ.get("ZEP_USER", "")
 
 
-def get_jsessionid():
+def get_jsessionid(user, password):
     try:
         headers = CaseInsensitiveDict()
         headers["Content-Type"] = "application/x-www-form-urlencoded"

@@ -24,10 +24,11 @@ mg_login_url = os.environ.get("MG_LOGIN_URL", "")
 
 mg_pipeline_url = os.environ.get("MG_PIPELINE_URL", "")
 mg_pipelog_url = os.environ.get("MG_PIPELOG_URL", "")
+mg_zep_user_url= os.environ.get("MG_ZEP_USER_URL", "")
 
 
 
-def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify):
+def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_user, z_pass):
     # check if job["notebook"]["id"] is not empty
     if not note_id or note_id == "":
         return (
@@ -44,7 +45,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify):
             },
         )
 
-    jsessionid = get_jsessionid()
+    jsessionid = get_jsessionid(z_user, z_pass)
     
     if jsessionid == "ErrorJsessionid":
         return jsonify({"error": "unable get jsessionid"}), 401
@@ -205,7 +206,9 @@ def get_pipelines(id, jsonify):
                     id,
                     process_order_index,
                     len(flow_job),
-                    jsonify
+                    jsonify,
+                    job["zepUser"],
+                    job["zepPass"]
                 )
                 finish = run[1]
                 finish["label"] = job["data"]["label"]
