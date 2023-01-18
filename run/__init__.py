@@ -182,8 +182,10 @@ def get_pipelines(id, jsonify):
     has_error = False
 
     try:
+        url = pipeline_api_url + "/" + id
+        print('url: ', url)
         response = requests.get(
-            pipeline_api_url + "/" + id, headers={"Authorization": ""}
+            url, headers={"Authorization": ""}
         )
         json_res = response.json()
 
@@ -202,12 +204,20 @@ def get_pipelines(id, jsonify):
             for job in jobs:
                 try:
                     note_id = job["notebook"]["id"]
+                except Exception as e:
+                    print(str(e))
+                    return print(str(e))
+                try:
                     zep_user = job["zepUser"]
+                except Exception as e:
+                    print(str(e))
+                    return print(str(e))
+                try:
                     zep_pass = job["zepPass"]
                 except Exception as e:
                     print(str(e))
-                    return print("notebook id, zepUser, zepPass is required")
-                if not note_id == "" or not zep_user == "" or not zep_pass == "":
+                    return print(str(e))
+                if note_id == "" or zep_user == "" or zep_pass == "":
                     return print("notebook id, zepUser, zepPass is required")
                 # run notebook
                 run = run_pipeline(
@@ -248,8 +258,8 @@ def get_pipelines(id, jsonify):
         }
         return res
     except Exception as e:
-        print(str(e))
-        return str(e)
+        print("Error:", str(e))
+        return jsonify({"message": str(e)}), 500
 
 
 def handler(request, jsonify):
@@ -309,11 +319,10 @@ def handler(request, jsonify):
 
     res_raw = get_pipelines(mg_pipeline_id, jsonify)
 
-    try:
-        res = json.loads(json.dumps(res_raw))
-        status_code = 200 if res["has_error"] == False else 400
-    except:
-        status_code = 500
+    print("res_raw: ", res_raw)
+
+    res = json.loads(json.dumps(res_raw))
+    status_code = 200 if res["has_error"] == False else 400
 
     elapsed_time = time.process_time() - t
 
