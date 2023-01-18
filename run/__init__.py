@@ -259,7 +259,9 @@ def get_pipelines(id, jsonify):
         return res
     except Exception as e:
         print("Error:", str(e))
-        return jsonify({"message": str(e)}), 500
+        return {
+            "has_error": True,
+        }
 
 
 def handler(request, jsonify):
