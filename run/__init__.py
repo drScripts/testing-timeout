@@ -296,7 +296,7 @@ def handler(request, jsonify):
                 d = json.dumps(response_pipe.json())
                 # throw error if status code is not 200
                 if response_pipe.status_code != 200:
-                    return jsonify({"message": d}), 422
+                    return jsonify({"message": d}), 400
 
             except Exception as e:
                 return jsonify({"message": str(e)}), 500
@@ -307,10 +307,13 @@ def handler(request, jsonify):
     except:
         return jsonify({"message": "mgPipelineId is required"}), 422
 
-    res = get_pipelines(mg_pipeline_id, jsonify)
-    res = json.loads(json.dumps(res))
+    res_raw = get_pipelines(mg_pipeline_id, jsonify)
 
-    status_code = 200 if res["has_error"] == False else 400
+    try:
+        res = json.loads(json.dumps(res_raw))
+        status_code = 200 if res["has_error"] == False else 400
+    except:
+        status_code = 500
 
     elapsed_time = time.process_time() - t
 
