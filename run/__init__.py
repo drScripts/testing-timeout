@@ -24,8 +24,7 @@ mg_login_url = os.environ.get("MG_LOGIN_URL", "")
 
 mg_pipeline_url = os.environ.get("MG_PIPELINE_URL", "")
 mg_pipelog_url = os.environ.get("MG_PIPELOG_URL", "")
-mg_zep_user_url= os.environ.get("MG_ZEP_USER_URL", "")
-
+mg_zep_user_url = os.environ.get("MG_ZEP_USER_URL", "")
 
 
 def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_user, z_pass):
@@ -46,7 +45,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
         )
 
     jsessionid = get_jsessionid(z_user, z_pass)
-    
+
     if jsessionid == "ErrorJsessionid":
         return jsonify({"error": "unable get jsessionid"}), 401
 
@@ -91,7 +90,8 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
         for i, paragraph in enumerate(paragraphs):
             # zeppelin paragraph log url
             zep_log_url = (
-                zeppelin_api_url + "/" + note_id + "/paragraph/" + paragraph["id"]
+                zeppelin_api_url + "/" + note_id +
+                "/paragraph/" + paragraph["id"]
             )
 
             # get zeppelin paragraph log
@@ -201,9 +201,9 @@ def get_pipelines(id, jsonify):
 
             for job in jobs:
                 try:
-                    note_id=job["notebook"]["id"]
-                    zep_user=job["zepUser"]
-                    zep_pass=job["zepPass"]
+                    note_id = job["notebook"]["id"]
+                    zep_user = job["zepUser"]
+                    zep_pass = job["zepPass"]
                 except Exception as e:
                     print(str(e))
                     return print("notebook id, zepUser, zepPass is required")
@@ -258,6 +258,12 @@ def handler(request, jsonify):
 
     # Get the request body
     body = request.get_json()
+    headers = request.headers
+
+    try:
+        bearer_token = headers["Authorization"]
+    except:
+        return jsonify({"message": "Unauthorized"}), 401
 
     try:
         cron = True if body["cron"] == "true" else False
@@ -271,31 +277,32 @@ def handler(request, jsonify):
         if len(mg_pipeline_id) == 0:
             return jsonify({"message": "mgPipelineId is required"}), 422
         else:
+            # try:
+            # response = requests.post(
+            #     mg_login_url, json={
+            #         "email": mg_email, "password": mg_password}
+            # )
+
+            # data = json.dumps(response.json())
+            # token = json.loads(data)["token"]
+
+            # check mg pipeline
             try:
-                response = requests.post(
-                    mg_login_url, json={"email": mg_email, "password": mg_password}
+                response_pipe = requests.get(
+                    mg_pipeline_url + "/" + mg_pipeline_id,
+                    headers={"Authorization": bearer_token},
                 )
 
-                data = json.dumps(response.json())
-                token = json.loads(data)["token"]
-
-                # check mg pipeline
-                try:
-                    response_pipe = requests.get(
-                        mg_pipeline_url + "/" + mg_pipeline_id,
-                        headers={"Authorization": "Bearer " + token},
-                    )
-
-                    d = json.dumps(response_pipe.json())
-                    # throw error if status code is not 200
-                    if response_pipe.status_code != 200:
-                        return jsonify({"message": d}), 422
-
-                except Exception as e:
-                    return jsonify({"message": str(e)}), 422
+                d = json.dumps(response_pipe.json())
+                # throw error if status code is not 200
+                if response_pipe.status_code != 200:
+                    return jsonify({"message": d}), 422
 
             except Exception as e:
-                print(str(e))
+                return jsonify({"message": str(e)}), 500
+
+            # except Exception as e:
+            #     print(str(e))
 
     except:
         return jsonify({"message": "mgPipelineId is required"}), 422
