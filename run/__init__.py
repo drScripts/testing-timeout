@@ -321,7 +321,7 @@ def handler(request, jsonify):
 
     res_raw = get_pipelines(mg_pipeline_id, jsonify)
 
-    print("res_raw: ", res_raw)
+    # print("res_raw: ", res_raw)
 
     res = json.loads(json.dumps(res_raw))
     status_code = 200 if res["has_error"] == False else 400
@@ -353,6 +353,7 @@ def handler(request, jsonify):
 
         # patch mg pipeline
         try:
+            print("mg_pipeline_url", url)
             status = "SUCCESS" if status_code == 200 else "ERROR"
 
             response = requests.patch(
@@ -361,7 +362,7 @@ def handler(request, jsonify):
                     "last_run": str(time.time()),
                     "last_status": status,
                 },
-                headers={"Authorization": "Bearer " + token},
+                headers={"Authorization": bearer_token},
             )
 
             if cron == True and notification == True and createdBy != None:
