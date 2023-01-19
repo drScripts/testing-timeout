@@ -177,7 +177,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
         )
 
 
-def get_pipelines(id, jsonify):
+def get_pipelines(id, jsonify, bearer_token):
     finished_flow = []
     has_error = False
 
@@ -185,9 +185,10 @@ def get_pipelines(id, jsonify):
         url = pipeline_api_url + "/" + id
         print('url: ', url)
         response = requests.get(
-            url, headers={"Authorization": ""}
+            url, headers={"Authorization": bearer_token}
         )
         json_res = response.json()
+        print('json_res: ', json_res)
 
         flow_job = json.loads(json_res["flow_job"])
         # print('flow_job: ', flow_job)
@@ -319,7 +320,7 @@ def handler(request, jsonify):
     except:
         return jsonify({"message": "mgPipelineId is required"}), 422
 
-    res_raw = get_pipelines(mg_pipeline_id, jsonify)
+    res_raw = get_pipelines(mg_pipeline_id, jsonify, bearer_token)
 
     # print("res_raw: ", res_raw)
 
