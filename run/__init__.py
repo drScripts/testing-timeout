@@ -353,8 +353,9 @@ def handler(request, jsonify):
         # utc_time = now.astimezone(utc)
 
         # get mg pipeline
-        response = requests.get(url)
+        response = requests.get(url, headers={"Authorization": bearer_token})
         data = json.dumps(response.json())
+        print('data: ', data)
 
         createdBy = json.loads(data)["createdBy"]
         notification = json.loads(data)["notification"]
