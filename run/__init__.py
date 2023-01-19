@@ -47,7 +47,19 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
     jsessionid = get_jsessionid(z_user, z_pass)
 
     if jsessionid == "ErrorJsessionid":
-        return jsonify({"error": "unable get jsessionid"}), 401
+         return (
+            False,
+            {
+                "pipeline_id": pipeId,
+                "flow_sequence": process_order_index + 1,
+                "flow_length": flow_length,
+                "notebook_id": note_id,
+                "paragraph_logs": [],
+                "is_success": 0,
+                "message": "Unable to get jsessionid or unauthorized",
+                "elapsed_time": 0,
+            },
+        )
 
     zep_job_url = zeppelin_api_url + "/job/" + note_id
 
@@ -183,15 +195,13 @@ def get_pipelines(id, jsonify, bearer_token):
 
     try:
         url = pipeline_api_url + "/" + id
-        print('url: ', url)
         response = requests.get(
             url, headers={"Authorization": bearer_token}
         )
         json_res = response.json()
-        print('json_res: ', json_res)
+        # print('json_res: ', json_res)
 
         flow_job = json.loads(json_res["flow_job"])
-        # print('flow_job: ', flow_job)
 
         if not isinstance(flow_job, list):
             return print("flowJob is not array")
