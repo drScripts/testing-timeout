@@ -295,7 +295,7 @@ def handler(request, jsonify):
 
     try:
         mg_pipeline_id = body["mgPipelineId"]
-        token = ""
+        # token = ""
 
         if len(mg_pipeline_id) == 0:
             return jsonify({"message": "mgPipelineId is required"}), 422
@@ -390,7 +390,7 @@ def handler(request, jsonify):
                     response = requests.post(
                         mg_pipelog_url,
                         json=post_data,
-                        headers={"Authorization": "Bearer " + token},
+                        headers={"Authorization": bearer_token},
                     )
 
                     # print("post pipelog: ", response.json())
