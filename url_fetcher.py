@@ -16,8 +16,7 @@ def get_token():
         if login_response.status_code == 200:
             return data["token"]
         else:
-            print("Failed to get token")
-            print(data)
+            print("Failed to get system token")
             return None
     except requests.exceptions.RequestException as e:
         print(str(e))
