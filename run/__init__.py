@@ -12,6 +12,8 @@ from jsession import get_jsessionid
 from socket_jagad import send_event
 from solr import store_to_solr
 
+from mail_notification import handler as mail_notification_handler
+
 load_dotenv()
 
 pipeline_api_url = os.environ.get("PIPELINE_API_URL", "")
@@ -25,6 +27,7 @@ mg_login_url = os.environ.get("MG_LOGIN_URL", "")
 mg_pipeline_url = os.environ.get("MG_PIPELINE_URL", "")
 mg_pipelog_url = os.environ.get("MG_PIPELOG_URL", "")
 mg_zep_user_url = os.environ.get("MG_ZEP_USER_URL", "")
+mg_user_url = os.environ.get("MG_USER_URL", "")
 
 
 def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_user, z_pass):
@@ -47,7 +50,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
     jsessionid = get_jsessionid(z_user, z_pass)
 
     if jsessionid == "ErrorJsessionid":
-         return (
+        return (
             False,
             {
                 "pipeline_id": pipeId,
@@ -343,8 +346,8 @@ def handler(request, jsonify):
         "message": "Finished",
         "result": res,
     }
+    print('result: ', result)
 
-    # login to mg with email and password
     try:
         url = mg_pipeline_url + "/" + mg_pipeline_id
         # print("url: ", url)
@@ -355,13 +358,37 @@ def handler(request, jsonify):
         # get mg pipeline
         response = requests.get(url, headers={"Authorization": bearer_token})
         data = json.dumps(response.json())
-        print('data: ', data)
+        # print('data: ', data)
 
         createdBy = json.loads(data)["createdBy"]
         notification = json.loads(data)["notification"]
 
         print("notification:", notification)
         print("createdBy:", createdBy)
+
+        # get user detail
+        user_data = None
+        try:
+            user_response = requests.get(
+                mg_user_url + "/" + createdBy,
+                headers={"Authorization": bearer_token},
+            )
+
+            user_data = json.dumps(user_response.json())
+
+            if user_response.status_code == 200:
+                user_name = json.loads(user_data)[
+                    "firstName"] + " " + json.loads(user_data)["lastName"]
+                user_enable_mail_notification = json.loads(
+                    user_data)["enableMailNotification"]
+                user_data = (user_name, user_enable_mail_notification)
+
+                print('user_data: ', user_data)
+            else:
+                user_data = None
+
+        except Exception as e:
+            print(str(e))
 
         # patch mg pipeline
         try:
@@ -429,6 +456,17 @@ def handler(request, jsonify):
                     },
                     user_id=createdBy,
                 )
+
+            if cron == True and user_data != None and user_data[1] == True:
+                try:
+                    # send email
+                    mail_notification_handler({
+                        "user": user_data,
+                        "logs": res["logs"],
+                    }
+                    )
+                except Exception as e:
+                    print(str(e))
 
         except Exception as e:
             print(str(e))
