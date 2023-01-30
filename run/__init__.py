@@ -383,7 +383,7 @@ def handler(request, jsonify):
                     "firstName"] + " " + json.loads(user_data)["lastName"]
                 user_enable_mail_notification = json.loads(
                     user_data)["enableMailNotification"]
-                not_cron_mail_notification = notification["notCronMailNotification"]
+                not_cron_mail_notification = json.loads(user_data)["notCronMailNotification"]
                 user_emails = json.loads(user_data)["emails"]
                 # emails string to array
                 user_emails = user_emails.split(",")
@@ -464,10 +464,14 @@ def handler(request, jsonify):
                     user_id=createdBy,
                 )
 
-            if mail_notify_for == "ALL" or (mail_notify_for == "ERROR" and status_code != 200) or (mail_notify_for == "SUCCESS" and status_code == 200):
-                # Test
-                # cron = True
-                if cron == True and user_data != None and user_data[1] == True or (not_cron_mail_notification == True and user_data != None and user_data[1] == True):
+            # Test
+            # cron = True
+            
+            # print("not_cron_mail_notification:", not_cron_mail_notification)
+            # print("mail_notify_for:", mail_notify_for)
+            
+            if (mail_notify_for == "ALL") or (mail_notify_for == "ERROR" and status_code != 200) or (mail_notify_for == "SUCCESS" and status_code == 200):
+                if (cron == True and user_data != None and user_data[1] == True) or (not_cron_mail_notification == True and user_data != None and user_data[1] == True):
                     try:
                         # send email
                         mail_notification_handler({
