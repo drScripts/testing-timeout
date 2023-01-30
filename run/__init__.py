@@ -368,6 +368,7 @@ def handler(request, jsonify):
 
         # get user detail
         user_data = None
+        not_cron_mail_notification = False
         try:
             user_response = requests.get(
                 mg_user_url + "/" + createdBy,
@@ -381,6 +382,7 @@ def handler(request, jsonify):
                     "firstName"] + " " + json.loads(user_data)["lastName"]
                 user_enable_mail_notification = json.loads(
                     user_data)["enableMailNotification"]
+                not_cron_mail_notification = notification["notCronMailNotification"]
                 user_emails = json.loads(user_data)["emails"]
                 # emails string to array
                 user_emails = user_emails.split(",")
@@ -463,7 +465,7 @@ def handler(request, jsonify):
 
             # Test
             # cron = True
-            if cron == True and user_data != None and user_data[1] == True:
+            if cron == True and user_data != None and user_data[1] == True or (not_cron_mail_notification == True and user_data != None and user_data[1] == True):
                 try:
                     # send email
                     mail_notification_handler({

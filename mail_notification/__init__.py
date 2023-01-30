@@ -33,7 +33,7 @@ def send_mail(email, is_success, logs, pipeline_name, user_data, run_date):
         
         print('send mail response: ', data)
     except Exception as e:
-        print(str(e))
+        print("Error send mail", str(e))
 
 
 def handler(data):
