@@ -386,7 +386,7 @@ def handler(request, jsonify):
                 not_cron_mail_notification = json.loads(user_data)["notCronMailNotification"]
                 user_emails = json.loads(user_data)["emails"]
                 # emails string to array
-                user_emails = user_emails.split(",")
+                # user_emails = user_emails.split(",")
                 user_data = (
                     user_name, user_enable_mail_notification, user_emails)
 

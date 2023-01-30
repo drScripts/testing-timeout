@@ -9,9 +9,9 @@ load_dotenv()
 
 mg_mail_notification_url = os.environ.get("MG_MAIL_NOTIFICATION_URL", "")
 
-def send_mail(email, is_success, logs, pipeline_name, user_data, run_date):
+def send_mail(emails, is_success, logs, pipeline_name, user_data, run_date):
     data = {
-        "recipient": email,
+        "recipients": emails,
         "pipelineName": pipeline_name,
         "recipientName": user_data["name"],
         "isSuccess": is_success,
@@ -52,7 +52,7 @@ def handler(data):
     
     emails = user["emails"]
     
-    for email in emails:
-        send_mail(email, is_success, logs, pipeline_name, user, run_date)
+    # for email in emails:
+    send_mail(emails, is_success, logs, pipeline_name, user, run_date)
         # delay 2 seconds
-        time.sleep(2)
+        # time.sleep(2)
