@@ -346,7 +346,7 @@ def handler(request, jsonify):
         "message": "Finished",
         "result": res,
     }
-    print('result: ', result)
+    # print('result: ', result)
 
     try:
         url = mg_pipeline_url + "/" + mg_pipeline_id
@@ -381,9 +381,13 @@ def handler(request, jsonify):
                     "firstName"] + " " + json.loads(user_data)["lastName"]
                 user_enable_mail_notification = json.loads(
                     user_data)["enableMailNotification"]
-                user_data = (user_name, user_enable_mail_notification)
+                user_emails = json.loads(user_data)["emails"]
+                # emails string to array
+                user_emails = user_emails.split(",")
+                user_data = (
+                    user_name, user_enable_mail_notification, user_emails)
 
-                print('user_data: ', user_data)
+                # print('user_data: ', user_data)
             else:
                 user_data = None
 
@@ -392,7 +396,7 @@ def handler(request, jsonify):
 
         # patch mg pipeline
         try:
-            print("mg_pipeline_url", url)
+            # print("mg_pipeline_url", url)
             status = "SUCCESS" if status_code == 200 else "ERROR"
 
             response = requests.patch(
@@ -457,12 +461,20 @@ def handler(request, jsonify):
                     user_id=createdBy,
                 )
 
+            # Test
+            cron = True
             if cron == True and user_data != None and user_data[1] == True:
                 try:
                     # send email
                     mail_notification_handler({
-                        "user": user_data,
+                        "user": {
+                            "name": user_data[0],
+                            "emails": user_data[2],
+                        },
                         "logs": res["logs"],
+                        "isSuccess": status_code == 200,
+                        "pipelineName": json.loads(data)["name_job"],
+                        "runDate": ts,
                     }
                     )
                 except Exception as e:
