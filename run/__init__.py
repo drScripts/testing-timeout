@@ -362,6 +362,7 @@ def handler(request, jsonify):
 
         createdBy = json.loads(data)["createdBy"]
         notification = json.loads(data)["notification"]
+        mail_notify_for = json.loads(data)["mailNotifyFor"]
 
         print("notification:", notification)
         print("createdBy:", createdBy)
@@ -463,24 +464,25 @@ def handler(request, jsonify):
                     user_id=createdBy,
                 )
 
-            # Test
-            # cron = True
-            if cron == True and user_data != None and user_data[1] == True or (not_cron_mail_notification == True and user_data != None and user_data[1] == True):
-                try:
-                    # send email
-                    mail_notification_handler({
-                        "user": {
-                            "name": user_data[0],
-                            "emails": user_data[2],
-                        },
-                        "logs": res["logs"],
-                        "isSuccess": status_code == 200,
-                        "pipelineName": json.loads(data)["name_job"],
-                        "runDate": ts,
-                    }
-                    )
-                except Exception as e:
-                    print(str(e))
+            if mail_notify_for == "ALL" or (mail_notify_for == "ERROR" and status_code != 200) or (mail_notify_for == "SUCCESS" and status_code == 200):
+                # Test
+                # cron = True
+                if cron == True and user_data != None and user_data[1] == True or (not_cron_mail_notification == True and user_data != None and user_data[1] == True):
+                    try:
+                        # send email
+                        mail_notification_handler({
+                            "user": {
+                                "name": user_data[0],
+                                "emails": user_data[2],
+                            },
+                            "logs": res["logs"],
+                            "isSuccess": status_code == 200,
+                            "pipelineName": json.loads(data)["name_job"],
+                            "runDate": ts,
+                        }
+                        )
+                    except Exception as e:
+                        print(str(e))
 
         except Exception as e:
             print(str(e))
