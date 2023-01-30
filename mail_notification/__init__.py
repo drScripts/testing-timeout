@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import requests
 import datetime as dt
+import time
 
 load_dotenv()
 
@@ -53,3 +54,5 @@ def handler(data):
     
     for email in emails:
         send_mail(email, is_success, logs, pipeline_name, user, run_date)
+        # delay 2 seconds
+        time.sleep(2)
