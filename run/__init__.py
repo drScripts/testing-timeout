@@ -462,7 +462,7 @@ def handler(request, jsonify):
                 )
 
             # Test
-            cron = True
+            # cron = True
             if cron == True and user_data != None and user_data[1] == True:
                 try:
                     # send email
