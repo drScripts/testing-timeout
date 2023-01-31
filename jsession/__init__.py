@@ -24,7 +24,7 @@ def get_jsessionid(zep_user, zep_pass):
         data = f"userName={zep_user}&password={zep_pass}"
         time1 = time.time()
         resp = requests.post(zep_login_url, headers=headers, data=data)
-        print("jsession/__init__.py: " + zep_login_url + " " , (time.time() - time1) * 1000,file=sys.stdout)
+        print("jsession/__init__.py: " + zep_login_url + " " , (time.time() - time1) * 1000,file=sys.stdout,flush=True)
         if resp.status_code != 200:
             return "ErrorJsessionid"
 

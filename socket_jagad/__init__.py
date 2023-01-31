@@ -17,7 +17,7 @@ def send_event(event, event_data, user_id):
             json={"event": event, "event-data": event_data, "email": user_id},
         )
         
-        print("socket_jagad/__init__.py: " + mg_socket_url + "/event" + " " , (time.time() - time1) * 1000,file=sys.stdout)
+        print("socket_jagad/__init__.py: " + mg_socket_url + "/event" + " " , (time.time() - time1) * 1000,file=sys.stdout,flush=True)
         data = response.json()
         print(data)
         return True

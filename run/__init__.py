@@ -79,7 +79,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
             zep_job_url,
             headers=headers,  # type: ignore
         )
-        print("run/__init__.py: " + zep_job_url + " " , (time.time() - time1) * 1000,file=sys.stdout)
+        print("run/__init__.py: " + zep_job_url + " " , (time.time() - time1) * 1000,file=sys.stdout,flush=True)
 
         data = json.dumps(response.json())
         data = json.loads(data)
@@ -121,7 +121,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
                     headers=headers,  # type: ignore
                 )
                 
-                print("run/__init__.py:2 " + zep_job_url + " " , (time.time() - time1) * 1000,file=sys.stdout)
+                print("run/__init__.py:2 " + zep_job_url + " " , (time.time() - time1) * 1000,file=sys.stdout,flush=True)
 
                 data_log = json.dumps(response_log.json())
                 data_log_loads = json.loads(data_log)
@@ -209,7 +209,7 @@ def get_pipelines(id, jsonify, bearer_token):
             url, headers={"Authorization": bearer_token}
         )
         
-        print("run/__init__.py: " + url + " " , (time.time() - time1) * 1000,file=sys.stdout)
+        print("run/__init__.py: " + url + " " , (time.time() - time1) * 1000,file=sys.stdout,flush=True)
         
         json_res = response.json()
         # print('json_res: ', json_res)
@@ -332,7 +332,7 @@ def handler(request, jsonify):
                 )
 
                 
-                print("run/__init__.py: " + mg_pipeline_url + "/" + mg_pipeline_id + " " , (time.time() - time1) * 1000,file=sys.stdout)
+                print("run/__init__.py: " + mg_pipeline_url + "/" + mg_pipeline_id + " " , (time.time() - time1) * 1000,file=sys.stdout,flush=True)
                 
                 
                 d = json.dumps(response_pipe.json())
@@ -375,7 +375,7 @@ def handler(request, jsonify):
         # get mg pipeline
         time1 = time.time()
         response = requests.get(url, headers={"Authorization": bearer_token})
-        print("run/__init__.py: " + url + " " , (time.time() - time1) * 1000,file=sys.stdout)
+        print("run/__init__.py: " + url + " " , (time.time() - time1) * 1000,file=sys.stdout,flush=True)
         
         data = json.dumps(response.json())
         # print('data: ', data)
@@ -397,7 +397,7 @@ def handler(request, jsonify):
                 headers={"Authorization": bearer_token},
             )
             
-            print("run/__init__.py: " + mg_user_url + "/" + createdBy + " " , (time.time() - time3) * 1000,file=sys.stdout)
+            print("run/__init__.py: " + mg_user_url + "/" + createdBy + " " , (time.time() - time3) * 1000,file=sys.stdout,flush=True)
 
             user_data = json.dumps(user_response.json())
 
@@ -435,7 +435,7 @@ def handler(request, jsonify):
                 headers={"Authorization": bearer_token},
             )
             
-            print("run/__init__.py: " + url + " " , (time.time() - time4) * 1000,file=sys.stdout)
+            print("run/__init__.py: " + url + " " , (time.time() - time4) * 1000,file=sys.stdout,flush=True)
 
     
             if cron == True and notification == True and createdBy != None:
@@ -456,7 +456,7 @@ def handler(request, jsonify):
                     )
                     
                     
-                    print("run/__init__.py: " + mg_pipelog_url + " " , (time.time() - time5) * 1000,file=sys.stdout)
+                    print("run/__init__.py: " + mg_pipelog_url + " " , (time.time() - time5) * 1000,file=sys.stdout,flush=True)
 
 
                     # print("post pipelog: ", response.json())
