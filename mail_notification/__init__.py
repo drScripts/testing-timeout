@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import requests
 import datetime as dt
 import time
+import sys
 
 load_dotenv()
 
@@ -31,7 +32,7 @@ def send_mail(emails, is_success, logs, pipeline_name, user_data, run_date):
     try:
         time1 = time.time()
         response = requests.post(mg_mail_notification_url, json=data)
-        print("mail_notifiction/__init__.py: " + mg_mail_notification_url + " " , (time.time() - time1) * 1000)
+        print("mail_notifiction/__init__.py: " + mg_mail_notification_url + " " , (time.time() - time1) * 1000,file=sys.stdout)
         data = response.json()
         
         # print('send mail response: ', data)

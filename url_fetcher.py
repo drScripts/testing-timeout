@@ -13,7 +13,7 @@ def get_token():
             json={"email": email, "password": password},
         )
         
-        print("url_fetcher.py: https://database-query.v3.microgen.id/api/v1/fb6db565-2e6c-41eb-bf0f-66f43b2b75ae/auth/login ", (time.time() - time1) * 1000)
+        print("url_fetcher.py: https://database-query.v3.microgen.id/api/v1/fb6db565-2e6c-41eb-bf0f-66f43b2b75ae/auth/login ", (time.time() - time1) * 1000, file=sys.stdout)
             
             
         data = login_response.json()
@@ -43,7 +43,7 @@ def hello(mg_pipeline_id):
                     "https://dontdqcopl.function.microgen.id/pipeline-run", json=data, headers={"Authorization": "Bearer " + token}
                 )
                 
-                print("url_fetcher.py: https://dontdqcopl.function.microgen.id/pipeline-run ", (time.time() - time1) * 1000)
+                print("url_fetcher.py: https://dontdqcopl.function.microgen.id/pipeline-run ", (time.time() - time1) * 1000,file=sys.stdout)
                 
                 status_code = response.status_code
                 print('status_code: ', status_code)

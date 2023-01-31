@@ -4,6 +4,7 @@ import requests
 import time
 from dotenv import load_dotenv
 from requests.structures import CaseInsensitiveDict
+import sys
 
 load_dotenv()
 
@@ -23,7 +24,7 @@ def get_jsessionid(zep_user, zep_pass):
         data = f"userName={zep_user}&password={zep_pass}"
         time1 = time.time()
         resp = requests.post(zep_login_url, headers=headers, data=data)
-        print("jsession/__init__.py: " + zep_login_url + " " , (time.time() - time1) * 1000)
+        print("jsession/__init__.py: " + zep_login_url + " " , (time.time() - time1) * 1000,file=sys.stdout)
         if resp.status_code != 200:
             return "ErrorJsessionid"
 
