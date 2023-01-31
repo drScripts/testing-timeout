@@ -26,15 +26,17 @@ def send_mail(emails, is_success, logs, pipeline_name, user_data, run_date):
     # logs = body["logs"]
     # is_success = body["isSuccess"]
     
-    print('send mail data: ', data)
+    # print('send mail data: ', data)
     
     try:
+        time1 = time.time()
         response = requests.post(mg_mail_notification_url, json=data)
+        print("mail_notifiction/__init__.py: " + mg_mail_notification_url + " " , (time.time() - time1) * 1000)
         data = response.json()
         
-        print('send mail response: ', data)
+        # print('send mail response: ', data)
     except Exception as e:
-        print("Error send mail", str(e))
+        print()
 
 
 def handler(data):

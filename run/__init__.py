@@ -66,17 +66,19 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
 
     zep_job_url = zeppelin_api_url + "/job/" + note_id
 
-    t = time.process_time()
+    timecok = time.process_time()
 
     headers = {
         "Cookie": jsessionid,
     }
 
     try:
+        time1 = time.time()
         response = requests.get(
             zep_job_url,
             headers=headers,  # type: ignore
         )
+        print("run/__init__.py: " + zep_job_url + " " , (time.time() - time1) * 1000)
 
         data = json.dumps(response.json())
         data = json.loads(data)
@@ -111,11 +113,14 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
 
             # get zeppelin paragraph log
             try:
-                t = time.process_time()
+                timecok = time.process_time()
+                time = time.time()
                 response_log = requests.get(
                     zep_log_url,
                     headers=headers,  # type: ignore
                 )
+                
+                print("run/__init__.py:2 " + zep_job_url + " " , (time.time() - time1) * 1000)
 
                 data_log = json.dumps(response_log.json())
                 data_log_loads = json.loads(data_log)
@@ -128,7 +133,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
                             "is_success": 1 if results["code"] == "SUCCESS" else 0,
                             "messages": results["msg"],
                             "text": data_log_loads["body"]["text"],
-                            "elapsed_time": time.process_time() - t,
+                            "elapsed_time": time.process_time() - timecok,
                         }
                     )
                 elif results["code"] == "ERROR":
@@ -137,7 +142,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
                             "is_success": 1 if results["code"] == "SUCCESS" else 0,
                             "messages": results["msg"],
                             "text": data_log_loads["body"]["text"],
-                            "elapsed_time": time.process_time() - t,
+                            "elapsed_time": time.process_time() - timecok,
                         }
                     )
                     paragraph_error = True
@@ -155,11 +160,11 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
                         "notebook_id": note_id,
                         "is_success": 0,
                         "message": str(e),
-                        "elapsed_time": time.process_time() - t,
+                        "elapsed_time": time.process_time() - timecok,
                     },
                 )
 
-        elapsed_time = time.process_time() - t
+        elapsed_time = time.process_time() - timecok
 
         solr_data = {
             "pipeline_id": pipeId,
@@ -187,7 +192,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
                 "notebook_id": note_id,
                 "is_success": 0,
                 "message": str(e),
-                "elapsed_time": time.process_time() - t,
+                "elapsed_time": time.process_time() - timecok,
             },
         )
 
@@ -197,10 +202,14 @@ def get_pipelines(id, jsonify, bearer_token):
     has_error = False
 
     try:
+        time1 = time.time()
         url = pipeline_api_url + "/" + id
         response = requests.get(
             url, headers={"Authorization": bearer_token}
         )
+        
+        print("run/__init__.py: " + url + " " , (time.time() - time1) * 1000)
+        
         json_res = response.json()
         # print('json_res: ', json_res)
 
@@ -281,6 +290,7 @@ def get_pipelines(id, jsonify, bearer_token):
 def handler(request, jsonify):
     t = time.process_time()
     ts = time.time()
+    globalTime = time.time()
 
     # Get the request body
     body = request.get_json()
@@ -314,11 +324,16 @@ def handler(request, jsonify):
 
             # check mg pipeline
             try:
+                time1 = time.time()
                 response_pipe = requests.get(
                     mg_pipeline_url + "/" + mg_pipeline_id,
                     headers={"Authorization": bearer_token},
                 )
 
+                
+                print("run/__init__.py: " + mg_pipeline_url + "/" + mg_pipeline_id + " " , (time.time() - time1) * 1000)
+                
+                
                 d = json.dumps(response_pipe.json())
                 # throw error if status code is not 200
                 if response_pipe.status_code != 200:
@@ -349,6 +364,7 @@ def handler(request, jsonify):
     # print('result: ', result)
 
     try:
+        time2 = time.time()
         url = mg_pipeline_url + "/" + mg_pipeline_id
         # print("url: ", url)
         # now = datetime.now()
@@ -356,7 +372,10 @@ def handler(request, jsonify):
         # utc_time = now.astimezone(utc)
 
         # get mg pipeline
+        time1 = time.time()
         response = requests.get(url, headers={"Authorization": bearer_token})
+        print("run/__init__.py: " + url + " " , (time.time() - time1) * 1000)
+        
         data = json.dumps(response.json())
         # print('data: ', data)
 
@@ -371,10 +390,13 @@ def handler(request, jsonify):
         user_data = None
         not_cron_mail_notification = False
         try:
+            time3 = time.time()
             user_response = requests.get(
                 mg_user_url + "/" + createdBy,
                 headers={"Authorization": bearer_token},
             )
+            
+            print("run/__init__.py: " + mg_user_url + "/" + createdBy + " " , (time.time() - time3) * 1000)
 
             user_data = json.dumps(user_response.json())
 
@@ -402,6 +424,7 @@ def handler(request, jsonify):
             # print("mg_pipeline_url", url)
             status = "SUCCESS" if status_code == 200 else "ERROR"
 
+            time4 = time.time()
             response = requests.patch(
                 url,
                 json={
@@ -410,7 +433,10 @@ def handler(request, jsonify):
                 },
                 headers={"Authorization": bearer_token},
             )
+            
+            print("run/__init__.py: " + url + " " , (time.time() - time4) * 1000)
 
+    
             if cron == True and notification == True and createdBy != None:
                 # post pipelog
                 try:
@@ -421,11 +447,16 @@ def handler(request, jsonify):
                         "user": [createdBy],
                     }
 
+                    time5 = time.time()
                     response = requests.post(
                         mg_pipelog_url,
                         json=post_data,
                         headers={"Authorization": bearer_token},
                     )
+                    
+                    
+                    print("run/__init__.py: " + mg_pipelog_url + " " , (time.time() - time5) * 1000)
+
 
                     # print("post pipelog: ", response.json())
 
@@ -497,5 +528,5 @@ def handler(request, jsonify):
     solr_data = json.dumps(res, indent=4, sort_keys=True, default=str)
 
     store_to_solr(solr_data, mg_pipeline_id, ts, elapsed_time)
-
+    print(time.time() - globalTime)
     return jsonify(result), status_code
