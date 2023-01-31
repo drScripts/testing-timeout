@@ -67,7 +67,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
 
     zep_job_url = zeppelin_api_url + "/job/" + note_id
 
-    timecok = time.process_time()
+    t = time.process_time()
 
     headers = {
         "Cookie": jsessionid,
@@ -114,7 +114,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
 
             # get zeppelin paragraph log
             try:
-                timecok = time.process_time()
+                t = time.process_time()
                 time1 = time.time()
                 response_log = requests.get(
                     zep_log_url,
@@ -134,7 +134,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
                             "is_success": 1 if results["code"] == "SUCCESS" else 0,
                             "messages": results["msg"],
                             "text": data_log_loads["body"]["text"],
-                            "elapsed_time": time.process_time() - timecok,
+                            "elapsed_time": time.process_time() - t,
                         }
                     )
                 elif results["code"] == "ERROR":
@@ -143,7 +143,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
                             "is_success": 1 if results["code"] == "SUCCESS" else 0,
                             "messages": results["msg"],
                             "text": data_log_loads["body"]["text"],
-                            "elapsed_time": time.process_time() - timecok,
+                            "elapsed_time": time.process_time() - t,
                         }
                     )
                     paragraph_error = True
@@ -161,11 +161,11 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
                         "notebook_id": note_id,
                         "is_success": 0,
                         "message": str(e),
-                        "elapsed_time": time.process_time() - timecok,
+                        "elapsed_time": time.process_time() - t,
                     },
                 )
 
-        elapsed_time = time.process_time() - timecok
+        elapsed_time = time.process_time() - t
 
         solr_data = {
             "pipeline_id": pipeId,
@@ -193,7 +193,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
                 "notebook_id": note_id,
                 "is_success": 0,
                 "message": str(e),
-                "elapsed_time": time.process_time() - timecok,
+                "elapsed_time": time.process_time() - t,
             },
         )
 
@@ -382,9 +382,6 @@ def handler(request, jsonify):
         createdBy = json.loads(data)["createdBy"]
         notification = json.loads(data)["notification"]
         mail_notify_for = json.loads(data)["mailNotifyFor"]
-
-        print("notification:", notification)
-        print("createdBy:", createdBy)
 
         # get user detail
         user_data = None

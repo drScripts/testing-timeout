@@ -16,8 +16,6 @@ zep_login_url = os.environ.get("ZEP_LOGIN_URL", "")
 
 def get_jsessionid(zep_user, zep_pass):
     try:
-        
-        print(zep_user,zep_pass)
         headers = CaseInsensitiveDict()
         headers["Content-Type"] = "application/x-www-form-urlencoded"
 
@@ -31,7 +29,6 @@ def get_jsessionid(zep_user, zep_pass):
         # response cookies
         res_cookies=resp.cookies
         jsession_id=res_cookies['JSESSIONID']
-        print('jsession_id: ', jsession_id)
         
         return "JSESSIONID=" + jsession_id
     except:
