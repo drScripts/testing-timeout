@@ -3,7 +3,7 @@ import os
 import requests
 import time
 from dotenv import load_dotenv
-
+import sys
 load_dotenv()
 
 mg_socket_url = os.environ.get("MG_SOCKET_URL", "")
