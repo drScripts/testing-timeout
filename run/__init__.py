@@ -115,7 +115,7 @@ def run_pipeline(note_id, pipeId, process_order_index, flow_length, jsonify, z_u
             # get zeppelin paragraph log
             try:
                 timecok = time.process_time()
-                time = time.time()
+                time1 = time.time()
                 response_log = requests.get(
                     zep_log_url,
                     headers=headers,  # type: ignore
@@ -365,7 +365,6 @@ def handler(request, jsonify):
     # print('result: ', result)
 
     try:
-        time2 = time.time()
         url = mg_pipeline_url + "/" + mg_pipeline_id
         # print("url: ", url)
         # now = datetime.now()
